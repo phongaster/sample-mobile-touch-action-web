@@ -1,0 +1,82 @@
+extends layout
+
+block content
+  h1= title
+  div#drop_zone
+  p#action_result 0
+  button#single_tap_btn Single Tap
+  button#double_tap_btn Double Tap
+  button#long_tap_btn Long Tap
+  br
+  br
+  textarea#bunch_of_numbers_textarea
+
+  script(type='text/javascript').
+    let count = 0
+    let dump_text = ""
+    for(let i = 0; i < 1000; i++) {
+      dump_text += i + " "
+    }
+    let drop_zone = document.getElementById('drop_zone')
+    drop_zone.style.border = "1px solid gray"
+    drop_zone.style.height = "20px"
+    let action_result = document.getElementById('action_result')
+    action_result.style.width = "100px"
+    action_result.style.textAlign = "center"
+    let bunch_of_numbers_textarea = document.getElementById('bunch_of_numbers_textarea')
+    bunch_of_numbers_textarea.style.height = "200px"
+    bunch_of_numbers_textarea.style.width = "200px"
+    bunch_of_numbers_textarea.innerText = dump_text
+    let single_tap_btn = document.getElementById('single_tap_btn')
+    single_tap_btn.onclick = function () {
+      count++
+      action_result.innerText = count
+    }
+    let double_tap_btn = document.getElementById('double_tap_btn')
+    double_tap_btn.ondblclick = function () {
+      count--
+      action_result.innerText = count
+    }
+    let long_tap_btn = document.getElementById('long_tap_btn')
+    // Create variable for setTimeout
+    let delay
+
+    // Set number of milliseconds for longpress
+    let longpress = 1300
+
+    long_tap_btn.addEventListener('touchstart', function (e) {
+      delay = setTimeout(ok, longpress)
+
+      function ok() {
+        action_result.style.color = "red"
+      }
+
+    }, true)
+
+    long_tap_btn.addEventListener('touchmove', function (e) {
+      // On mouse up, we know it is no longer a longpress
+      clearTimeout(delay)
+    })
+
+    // drag and drop
+    const buttons = document.getElementsByTagName('button')
+    for(const button of buttons) {
+      button.setAttribute("draggable", "true")
+      button.addEventListener("dragover", dragover)
+      button.addEventListener("dragstart", dragstart)
+    }
+    drop_zone.addEventListener("dragenter", dragenter)
+    drop_zone.addEventListener("drop", drop)
+    let fromId
+    function dragstart(e) {
+      fromId = e.target.id
+    }
+    function dragover(e) {
+      e.preventDefault()
+    }
+    function dragenter(e) {
+      e.preventDefault()
+      e.target.append(document.getElementById(fromId))
+    }
+    function drop(e) {
+    }
